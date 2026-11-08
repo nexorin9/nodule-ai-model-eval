@@ -1,0 +1,10 @@
+# 顶层声明缺 endpoint_path 一项 —— 载入时应报 FIELD_MAPPING_MISSING 并写明缺哪个字段
+model_id: incomplete-model
+model_version: "1.0.0"
+authorized: true
+response_mapping:
+  candidates: candidates
+  position: position
+  size: size_mm
+  density: density
+  confidence: confidence

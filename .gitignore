@@ -1,0 +1,59 @@
+# ---- 凭据与本地配置（绝不入库）----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- 虚拟环境 ----
+venv/
+.venv/
+env/
+ENV/
+
+# ---- 依赖与构建产物 ----
+node_modules/
+target/
+dist/
+build/
+coverage/
+*.egg-info/
+*.egg
+
+# ---- 运行时数据与产物 ----
+# 这几个目录都是**运行时**产物，统一锚在仓库根（前导斜杠）。
+# 不加前导斜杠的话 `cases/` 会连 `tests/fixtures/cases/` 一起排除掉 ——
+# 那份样例被 8 处引用（tests/ 与 scripts/ 各若干），漏掉它等于发出去的仓库跑不了测试。
+/data/
+/logs/
+/runs/
+/cases/
+/reports/
+/templates/
+/bench-scale.json
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# ---- Python 缓存与工具缓存 ----
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+
+# ---- 编辑器与系统文件 ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ---- round 元数据（不应进入发布仓库）----
+score.json
+
+# 注意：qrcode.jpg 与 docs/ 下的截图、概念图属于发布内容，不在此排除范围内。

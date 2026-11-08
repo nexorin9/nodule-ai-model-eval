@@ -1,0 +1,11 @@
+# 未授权模型 —— 不加载、不参与本轮评估
+model_id: unauthorized-model
+model_version: "0.9.0"
+authorized: false
+endpoint_path: /api/v1/detections
+response_mapping:
+  candidates: candidates
+  position: position
+  size: size_mm
+  density: density
+  confidence: confidence

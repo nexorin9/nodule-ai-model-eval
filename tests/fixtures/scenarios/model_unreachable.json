@@ -1,0 +1,21 @@
+{
+  "_comment": "模型不可达样例：语义归并所用的 OpenAI-compatible 端点拒绝连接。此时该例降级为规则归并（normalize_source=rule、needs_review=true），并计入 rule_degraded 数 —— 绝不静默把该例当成阴性，绝不静默推进 run 状态。expected_error_code 是**落到该例行上**的错误码（降级），expected_cause_error_code 是网关侧抛出的原因码。真正的降级落点在任务 22 / 24。",
+  "scenario": "model_unreachable",
+  "expected_error_code": "RULE_DEGRADED",
+  "expected_cause_error_code": "MODEL_UNAVAILABLE",
+  "expected_fallback": "rule",
+  "expected_needs_review": true,
+  "counts_toward_metrics": true,
+  "accession_no": "MDLUNR-0001",
+  "request": {
+    "study_uid": "STUDY-MDLUNR-0001",
+    "image_ref": "dx://demo/mdlunr-0001",
+    "model_id": "demo-model",
+    "model_version": "v1.0.0"
+  },
+  "gold_standard_text": "右下肺见一磨玻璃结节，大小约 8mm。",
+  "stub": {
+    "kind": "model",
+    "mode": "connection_refused"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "_comment": "字段映射缺字段样例：模型目录缺 size 一项时，报 FIELD_MAPPING_MISSING 并写明缺哪个字段与来源模型。响应里的候选也刻意缺 size_mm —— 不猜、不填 0、不当默认值。",
+  "scenario": "field_mapping_missing",
+  "expected_error_code": "FIELD_MAPPING_MISSING",
+  "expected_missing_mapping_key": "size",
+  "expected_model_id": "missing-size-model",
+  "counts_toward_metrics": false,
+  "accession_no": "FLDMAP-0001",
+  "model_spec": {
+    "model_id": "missing-size-model",
+    "model_version": "1.0.0",
+    "authorized": true,
+    "endpoint_path": "/api/v1/detections",
+    "response_mapping": {
+      "candidates": "candidates",
+      "position": "position",
+      "density": "density",
+      "confidence": "confidence"
+    }
+  },
+  "request": {
+    "study_uid": "STUDY-FLDMAP-0001",
+    "image_ref": "dx://demo/fldmap-0001",
+    "model_id": "missing-size-model",
+    "model_version": "1.0.0"
+  },
+  "response": {
+    "study_uid": "STUDY-FLDMAP-0001",
+    "model_id": "missing-size-model",
+    "model_version": "1.0.0",
+    "candidates": [
+      {
+        "position": "右下肺",
+        "density": "磨玻璃",
+        "confidence": 0.88
+      }
+    ]
+  },
+  "stub": {
+    "kind": "inference",
+    "status_sequence": [200],
+    "echo_study_uid": true,
+    "omit_candidate_fields": ["size_mm"],
+    "candidates": [
+      {
+        "position": "右下肺",
+        "size_mm": 8.0,
+        "density": "磨玻璃",
+        "confidence": 0.88
+      }
+    ]
+  }
+}

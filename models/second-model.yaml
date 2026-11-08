@@ -1,0 +1,26 @@
+# 被评模型目录（second-model）—— 另一家厂商的字段命名
+#
+# 与 demo-model 对照用：demo-model 用「标准命名」（candidates / size_mm / density /
+# confidence），这一家用自己的叫法 —— 候选列表叫 findings 且包在 result 一层，
+# 部位叫 location、尺寸叫 diameter_mm、密度叫 attenuation、置信度叫 score，
+# 推理端点路径也换成了 /api/v2/nodule-detections。
+#
+# **差异全部收在这张映射表里**：业务代码只认内部键（candidates / position / size /
+# density / confidence），厂商叫什么与本产品无关。改厂商 = 改这一个 yaml 文件。
+
+model_id: second-model
+model_version: v2.3.0
+
+# 推理端点路径（相对 INFERENCE_BASE_URL）
+endpoint_path: /api/v2/nodule-detections
+
+# 响应字段映射：内部键 → 厂商响应里的字段名（支持点号路径）
+response_mapping:
+  candidates: result.findings
+  position: location
+  size: diameter_mm
+  density: attenuation
+  confidence: score
+
+# 未授权的模型不加载、不参与本轮评估
+authorized: true

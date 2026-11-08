@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nodule-ai-model-eval"
+version = "1.0.0"
+description = "肺结节AI模型评估系统 · 放射科胸片肺结节 AI 上线前 / 换版前的逐例评估与指标核算"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "nodule-ai-model-eval" }]
+keywords = ["医院", "医疗信息化", "放射科", "肺结节", "模型评估", "DRG"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+  "requests>=2.31.0",
+  "PyYAML>=6.0",
+  "openpyxl>=3.1.2",
+  "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4.0"]
+
+[project.scripts]
+nodule-eval = "nodule_eval.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]

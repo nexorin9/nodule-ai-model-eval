@@ -1,0 +1,25 @@
+# 被评模型目录（demo-model）
+#
+# 一份目录声明 = 一个被评模型的端点路径、版本、响应字段映射与授权开关。
+# 厂商各自把结节尺寸叫 size_mm / diameter_mm / size，差异收到这张表里，
+# 业务代码不出现厂商字段名。
+#
+# 任务 3 先落这份最小声明（供主干首跑）；任务 6 补第二款模型与两种厂商命名的对照
+# —— 见 models/second-model.yaml（那边叫 findings / diameter_mm / attenuation）。
+
+model_id: demo-model
+model_version: v1.0.0
+
+# 推理端点路径（相对 INFERENCE_BASE_URL）
+endpoint_path: /api/v1/detections
+
+# 响应字段映射：内部键 → 厂商响应里的字段名
+response_mapping:
+  candidates: candidates
+  position: position
+  size: size_mm
+  density: density
+  confidence: confidence
+
+# 未授权的模型不加载、不参与本轮评估
+authorized: true

@@ -1,0 +1,42 @@
+{
+  "endpoint": "inference",
+  "note": "推理服务：一次检出调用（含回显的 study_uid / model_id / model_version）",
+  "model_id": "demo-model",
+  "recorded_at": "2026-03-01T00:00:00+08:00",
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/detections",
+      "query": {},
+      "headers": {
+        "Accept": "*/*",
+        "Authorization": "Bearer {INFERENCE_API_TOKEN}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "study_uid": "STUDY-DEMO-001",
+        "image_ref": "dx://demo/study-001",
+        "model_id": "demo-model",
+        "model_version": "v1.0.0"
+      }
+    }
+  ],
+  "responses": [
+    {
+      "status": 200,
+      "payload": {
+        "study_uid": "STUDY-DEMO-001",
+        "model_id": "demo-model",
+        "model_version": "v1.0.0",
+        "candidates": [
+          {
+            "position": "右下肺",
+            "size_mm": 8.0,
+            "density": "磨玻璃",
+            "confidence": 0.92
+          }
+        ]
+      }
+    }
+  ]
+}

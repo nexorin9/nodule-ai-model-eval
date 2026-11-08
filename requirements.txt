@@ -1,0 +1,8 @@
+# 运行期依赖（院内 PC 离线安装用 wheel 离线包即可，见 docs/install.md）
+requests>=2.31.0
+PyYAML>=6.0
+openpyxl>=3.1.2
+python-dotenv>=1.0.0
+
+# 开发与自检
+pytest>=7.4.0

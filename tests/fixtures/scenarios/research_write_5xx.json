@@ -1,0 +1,27 @@
+{
+  "_comment": "科研平台写回失败样例：登记端点连续返回 5xx。退避重试最多 3 次后仍失败 —— run 停在 reviewed 不推进、错误码 RESEARCH_WRITE_FAILED、绝不把「请求发出」当成「已生效」。幂等键保证重放时对端只产生一条登记。",
+  "scenario": "research_write_5xx",
+  "expected_error_code": "RESEARCH_WRITE_FAILED",
+  "expected_attempts": 3,
+  "expected_run_status_after_failure": "reviewed",
+  "counts_toward_metrics": false,
+  "accession_no": "RSRCH-0001",
+  "idempotency_key": "sha256(run-smoke-001|demo-model|本地样例)",
+  "request": {
+    "run_id": "smoke-001",
+    "model_id": "demo-model",
+    "model_version": "v1.0.0",
+    "dataset_ref": "本地样例"
+  },
+  "response": {
+    "error": "research platform registry unavailable",
+    "status": 500
+  },
+  "stub": {
+    "kind": "research_platform",
+    "status_sequence": [500, 500, 500],
+    "reject_body": {
+      "error": "research platform registry unavailable"
+    }
+  }
+}

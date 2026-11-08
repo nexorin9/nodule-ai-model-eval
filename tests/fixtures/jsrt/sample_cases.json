@@ -1,0 +1,57 @@
+[
+  {
+    "accession_no": "JSRT-SAMPLE-001",
+    "gold_standard_text": "双肺未见明显结节。",
+    "image_ref": "jsrt://JPCNN001.png",
+    "study_uid": "STUDY-JPCNN001",
+    "source_study_id": "JPCNN001.png",
+    "has_nodule": false,
+    "nodule_size_mm": "",
+    "nodule_position": "",
+    "subtlety": ""
+  },
+  {
+    "accession_no": "JSRT-SAMPLE-002",
+    "gold_standard_text": "左肺上叶见结节影，大小约 15mm。",
+    "image_ref": "jsrt://JPCLN001.png",
+    "study_uid": "STUDY-JPCLN001",
+    "source_study_id": "JPCLN001.png",
+    "has_nodule": true,
+    "nodule_size_mm": "15",
+    "nodule_position": "l.upper lobe",
+    "subtlety": "5"
+  },
+  {
+    "accession_no": "JSRT-SAMPLE-003",
+    "gold_standard_text": "左肺上叶见结节影，大小约 30mm。",
+    "image_ref": "jsrt://JPCLN002.png",
+    "study_uid": "STUDY-JPCLN002",
+    "source_study_id": "JPCLN002.png",
+    "has_nodule": true,
+    "nodule_size_mm": "30",
+    "nodule_position": "l.upper lobe(S5)",
+    "subtlety": "5"
+  },
+  {
+    "accession_no": "JSRT-SAMPLE-004",
+    "gold_standard_text": "左肺上叶见结节影，大小约 30mm。",
+    "image_ref": "jsrt://JPCLN003.png",
+    "study_uid": "STUDY-JPCLN003",
+    "source_study_id": "JPCLN003.png",
+    "has_nodule": true,
+    "nodule_size_mm": "30",
+    "nodule_position": "l.upper lobe(S1+2)",
+    "subtlety": "5"
+  },
+  {
+    "accession_no": "JSRT-SAMPLE-005",
+    "gold_standard_text": "右肺上叶见结节影，大小约 14mm。",
+    "image_ref": "jsrt://JPCLN004.png",
+    "study_uid": "STUDY-JPCLN004",
+    "source_study_id": "JPCLN004.png",
+    "has_nodule": true,
+    "nodule_size_mm": "14",
+    "nodule_position": "r.upper lobe",
+    "subtlety": "5"
+  }
+]

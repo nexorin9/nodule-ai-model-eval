@@ -1,0 +1,71 @@
+{
+  "endpoint": "ris",
+  "note": "RIS 检查清单：首页不带 cursor，第二页带 cursor —— 两页都录",
+  "model_id": "",
+  "recorded_at": "2026-03-01T00:00:00+08:00",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/imaging-studies",
+      "query": {
+        "modality": "DX",
+        "from": "2026-03-01",
+        "to": "2026-03-31"
+      },
+      "headers": {
+        "Accept": "*/*",
+        "Authorization": "Bearer {RIS_API_TOKEN}"
+      },
+      "body": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imaging-studies",
+      "query": {
+        "modality": "DX",
+        "from": "2026-03-01",
+        "to": "2026-03-31",
+        "cursor": "1"
+      },
+      "headers": {
+        "Accept": "*/*",
+        "Authorization": "Bearer {RIS_API_TOKEN}"
+      },
+      "body": null
+    }
+  ],
+  "responses": [
+    {
+      "status": 200,
+      "payload": {
+        "items": [
+          {
+            "accession_no": "DEMO-0001",
+            "study_uid": "STUDY-DEMO-001",
+            "modality": "DX",
+            "study_date": "2026-03-01",
+            "report_status": "final",
+            "image_ref": "dx://demo/study-001"
+          }
+        ],
+        "next_cursor": "1"
+      }
+    },
+    {
+      "status": 200,
+      "payload": {
+        "items": [
+          {
+            "accession_no": "DEMO-0002",
+            "study_uid": "STUDY-DEMO-002",
+            "modality": "DX",
+            "study_date": "2026-03-02",
+            "report_status": "final",
+            "image_ref": "dx://demo/study-002"
+          }
+        ],
+        "next_cursor": ""
+      }
+    }
+  ]
+}

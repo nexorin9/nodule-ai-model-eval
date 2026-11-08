@@ -1,0 +1,50 @@
+{
+  "_comment": "一对多绑定样例：同一检查号命中两条影像（不同时间点）。RIS 侧一行对应两条 study_uid，引擎必须拒绝自动绑定并挂起人工判定（AMBIGUOUS_BINDING），绝不自动取第一条。",
+  "scenario": "ambiguous_binding",
+  "expected_error_code": "AMBIGUOUS_BINDING",
+  "expected_needs_review": true,
+  "counts_toward_metrics": false,
+  "accession_no": "AMBIG-0001",
+  "ris_items": [
+    {
+      "accession_no": "AMBIG-0001",
+      "study_uid": "STUDY-AMBIG-0001-A",
+      "modality": "DX",
+      "study_date": "2026-03-02",
+      "report_status": "final",
+      "image_ref": "dx://demo/ambig-0001-a"
+    },
+    {
+      "accession_no": "AMBIG-0001",
+      "study_uid": "STUDY-AMBIG-0001-B",
+      "modality": "DX",
+      "study_date": "2026-03-09",
+      "report_status": "final",
+      "image_ref": "dx://demo/ambig-0001-b"
+    }
+  ],
+  "gold_standard_text": "右下肺见一磨玻璃结节，大小约 8mm。",
+  "image_ref": "dx://demo/ambig-0001-a",
+  "stub": {
+    "kind": "ris",
+    "page_size": 0,
+    "items": [
+      {
+        "accession_no": "AMBIG-0001",
+        "study_uid": "STUDY-AMBIG-0001-A",
+        "modality": "DX",
+        "study_date": "2026-03-02",
+        "report_status": "final",
+        "image_ref": "dx://demo/ambig-0001-a"
+      },
+      {
+        "accession_no": "AMBIG-0001",
+        "study_uid": "STUDY-AMBIG-0001-B",
+        "modality": "DX",
+        "study_date": "2026-03-09",
+        "report_status": "final",
+        "image_ref": "dx://demo/ambig-0001-b"
+      }
+    ]
+  }
+}

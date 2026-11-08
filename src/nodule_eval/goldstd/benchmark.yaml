@@ -1,0 +1,439 @@
+# 金标准归并 **对照实验裁判集**（任务 25）
+#
+# **这份数据回答什么**：规则基线归并与模型归并，**在同一批人工标注的写法上**
+# 各能读对多少 —— 也就是「模型这一层到底值不值得加」。
+#
+# **与 `regression.yaml` 的分工**：
+#
+# - `regression.yaml`（21 条）：**否定作用域**这一层的护栏 —— 规则一改就跑一遍，
+#   防止敏感度 / 特异度在改动里悄悄漂掉。它是**回归**用的，不是**比较**用的；
+# - `benchmark.yaml`（本文件，66 条）：**裁判集** —— 覆盖否定、多病灶、跨行、
+#   量纲混写、别名变体、术语外写法六类真实写法，每条带**人工标注的标准标签**，
+#   作为「规则 vs 模型」对照实验的裁判。
+#
+# **标注口径**（与 `spec.md` → 判定口径与指标定义 一致）：
+#
+# - `presence`：原文写明了「有 / 没有病灶」→ true / false。原文两句话都没说
+#   （如「摄片位置满意」）→ null（读不出来，不落成阴性）。
+# - `location` / `size_mm` / `density`：**原文确实写了**才标注；没写 → null
+#   （「没写」与「读不出」在这份集里**故意分开**：前者是标注事实，
+#   后者是归并器的失效）。
+# - `size_mm`：**最大径**（毫米）。两径写法（`8×6mm`）按最大径计，
+#   与项目既有口径「8mm×6mm 取 8.0」一致。中文数字写法（「一公分」）
+#   按字面意思标注 —— 规则基线当前读不出，这一类正是对照实验要暴露的失效。
+# - `density`：只取**部位等价表 / 密度等价表里的标准标签**；表里没有的写法
+#   （如「高密度影」）按放射科语义标注为最近的标准标签 —— 这一类同样是
+#   对照实验要暴露的「等价表缺口」。
+# - `lesions`：原文描述了几处**不同部位**的病灶。同一处的并列描述
+#   （「结节及钙化灶」）按两处计，与 `regression.yaml` 的 neg-017 同口径。
+#
+# **数据与代码分开**：加一条真实写法只改这个文件，不动判定逻辑。
+# 裁判集改动会让对照表的数字变化 —— 所以每次改都要把 `version` 加一。
+
+version: 1
+description: 胸片肺结节金标准自由文本的人工标注裁判集（66 条，六类真实写法）。
+
+cases:
+  # ============================================================ 基础阳性（10）
+  - id: bm-001
+    category: 基础阳性
+    note: 最典型的写法 —— 部位 + 密度 + 尺寸齐备。
+    text: "右下肺见一磨玻璃结节，最大径约 8mm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.0, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-002
+    category: 基础阳性
+    note: 厘米写法 + 实性密度。
+    text: "右上肺见一实性结节影，直径约 1.2cm。"
+    expect: {presence: true, location: 右肺上叶, size_mm: 12.0, density: 实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-003
+    category: 基础阳性
+    note: 只写部位与密度，没写尺寸。
+    text: "左肺下叶见一磨玻璃结节。"
+    expect: {presence: true, location: 左肺下叶, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-004
+    category: 基础阳性
+    note: 只写部位与尺寸，没写密度。
+    text: "右肺中叶见结节影约 5mm。"
+    expect: {presence: true, location: 右肺中叶, size_mm: 5.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-005
+    category: 基础阳性
+    note: 「钙化灶」是放射科常用写法 —— 密度等价表当前只收了「钙化」。
+    text: "左下肺见一钙化灶。"
+    expect: {presence: true, location: 左肺下叶, size_mm: null, density: 钙化, lesions: 1, needs_human_review: false}
+
+  - id: bm-006
+    category: 基础阳性
+    note: 只写到「右肺」，没细到肺叶 —— 按侧别级标签标注。
+    text: "右肺见一空洞。"
+    expect: {presence: true, location: 右肺, size_mm: null, density: 空洞, lesions: 1, needs_human_review: false}
+
+  - id: bm-007
+    category: 基础阳性
+    note: 囊性低密度影 —— 「囊性」在密度等价表里。
+    text: "左上肺见一囊性低密度影。"
+    expect: {presence: true, location: 左肺上叶, size_mm: null, density: 囊性, lesions: 1, needs_human_review: false}
+
+  - id: bm-008
+    category: 基础阳性
+    note: 尺寸后面还跟了一句描述 —— 尺寸不许被后缀吃掉。
+    text: "右肺上叶见一结节影，最大径约 8mm，边界清楚。"
+    expect: {presence: true, location: 右肺上叶, size_mm: 8.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-009
+    category: 基础阳性
+    note: 部分实性 —— 密度等价表里是独立标签，不与实性合并。
+    text: "右下肺见部分实性结节，约 6mm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 6.0, density: 部分实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-010
+    category: 基础阳性
+    note: 散在多发 —— 只描述了一个部位，按一处计。
+    text: "双肺见散在磨玻璃结节影。"
+    expect: {presence: true, location: 双肺, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  # ============================================================ 基础阴性（8）
+  - id: bm-011
+    category: 基础阴性
+    note: 最典型的阴性写法。
+    text: "双肺未见明显结节影。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-012
+    category: 基础阴性
+    note: 「两肺」与「双肺」同义。
+    text: "两肺未见明显异常。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-013
+    category: 基础阴性
+    note: 「实变影」不在密度等价表里 —— 但它在否定范围内，不该被认成病灶。
+    text: "双肺纹理清晰，未见结节及实变影。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-014
+    category: 基础阴性
+    note: 前半句「心影大小正常」不表态，后半句否定 —— 整体阴性。
+    text: "心影大小正常，双肺未见异常。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-015
+    category: 基础阴性
+    note: 两个病灶词共用一个否定词。
+    text: "双肺未见结节影及钙化灶。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-016
+    category: 基础阴性
+    note: 阴性句里出现别的部位名 —— 部位不该被认领。
+    text: "肺门及纵隔未见明显异常。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-017
+    category: 基础阴性
+    note: 「无明显」是完整的否定说法。
+    text: "双肺无明显结节影。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-018
+    category: 基础阴性
+    note: 「未见」管两个并列的病灶词。
+    text: "未见明显结节及磨玻璃影。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  # ======================================================== 否定作用域（12）
+  - id: bm-019
+    category: 否定作用域
+    note: 前后两句并存 —— 取并存事实的阳性那一侧。
+    text: "双肺未见异常，右下肺见磨玻璃结节。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-020
+    category: 否定作用域
+    note: 「但」把两句切开 —— 后一句的部位 / 尺寸 / 密度都要认领。
+    text: "双肺未见明显结节，但右下肺见一磨玻璃结节影，约 8mm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.0, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-021
+    category: 否定作用域
+    note: 「除…外」是例外不是否定 —— 那处小结节是真的。
+    text: "除右下肺小结节外，双肺未见异常。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-022
+    category: 否定作用域
+    note: 句首否定 + 后半句阳性。
+    text: "未见明显异常，右上肺见一实性结节影。"
+    expect: {presence: true, location: 右肺上叶, size_mm: null, density: 实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-023
+    category: 否定作用域
+    note: 两个病灶词共用一个否定词 —— 不得只否定前一个。
+    text: "双肺未见结节影及磨玻璃影。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-024
+    category: 否定作用域
+    note: 单侧否定 —— 另一侧没说，不代表整体没病灶。
+    text: "右肺未见明显结节影。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-025
+    category: 否定作用域
+    note: 否定在前、描述在后 —— 「仅见」后面的纹理增粗不是病灶。
+    text: "未见明显结节影，仅见双肺纹理增粗。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-026
+    category: 否定作用域
+    note: 否定在前、阳性在后，跨侧别。
+    text: "左肺未见明显异常，右肺上叶见一钙化灶。"
+    expect: {presence: true, location: 右肺上叶, size_mm: null, density: 钙化, lesions: 1, needs_human_review: false}
+
+  - id: bm-027
+    category: 否定作用域
+    note: 两个否定句串联 —— 整体阴性。
+    text: "右下肺未见明显结节影，未见钙化灶。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-028
+    category: 否定作用域
+    note: 前半句阴性不表态，后半句阳性 —— 阳性那一侧说了算。
+    text: "心影未见异常，双肺见一磨玻璃结节影。"
+    expect: {presence: true, location: 双肺, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-029
+    category: 否定作用域
+    note: 并存事实 + 尺寸 —— 属性不许串味。
+    text: "双肺未见异常，右下肺见结节影约 8mm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-030
+    category: 否定作用域
+    note: 前面有病灶、后面否定 —— 仍取并存事实的阳性一侧。
+    text: "右下肺见一结节影，左肺未见明显异常。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: null, lesions: 1, needs_human_review: false}
+
+  # ========================================================== 多病灶口径（8）
+  - id: bm-031
+    category: 多病灶
+    note: 同一处的并列描述 —— 按两处计。
+    text: "右肺上叶见结节及钙化灶。"
+    expect: {presence: true, location: 右肺上叶, size_mm: null, density: null, lesions: 2, needs_human_review: false}
+
+  - id: bm-032
+    category: 多病灶
+    note: 两处不同部位 —— 顶层属性取首处（右上肺）。
+    text: "右上肺见一磨玻璃结节，左下肺见一实性结节。"
+    expect: {presence: true, location: 右肺上叶, size_mm: null, density: 磨玻璃, lesions: 2, needs_human_review: false}
+
+  - id: bm-033
+    category: 多病灶
+    note: 同一侧的两个肺叶。
+    text: "右肺上叶见一磨玻璃结节，右肺下叶见一实性结节。"
+    expect: {presence: true, location: 右肺上叶, size_mm: null, density: 磨玻璃, lesions: 2, needs_human_review: false}
+
+  - id: bm-034
+    category: 多病灶
+    note: 左右各一处 —— 首处是左上肺。
+    text: "左上肺见结节影，右上肺见结节影。"
+    expect: {presence: true, location: 左肺上叶, size_mm: null, density: null, lesions: 2, needs_human_review: false}
+
+  - id: bm-035
+    category: 多病灶
+    note: 「及」连接的两个肺叶 —— 首处是右肺中叶。
+    text: "右肺中叶及右下肺各见一结节影。"
+    expect: {presence: true, location: 右肺中叶, size_mm: null, density: null, lesions: 2, needs_human_review: false}
+
+  - id: bm-036
+    category: 多病灶
+    note: 「多发」+ 并列病灶词 —— 两处。
+    text: "双肺见多发结节及钙化灶。"
+    expect: {presence: true, location: 双肺, size_mm: null, density: null, lesions: 2, needs_human_review: false}
+
+  - id: bm-037
+    category: 多病灶
+    note: 左右两侧各一处 —— 首处是左肺。
+    text: "左肺见一实性结节，右肺见一磨玻璃结节。"
+    expect: {presence: true, location: 左肺, size_mm: null, density: 实性, lesions: 2, needs_human_review: false}
+
+  - id: bm-038
+    category: 多病灶
+    note: 两处不同密度 —— 首处是右肺上叶的空洞。
+    text: "右肺上叶见一空洞，右肺下叶见一钙化灶。"
+    expect: {presence: true, location: 右肺上叶, size_mm: null, density: 空洞, lesions: 2, needs_human_review: false}
+
+  # ========================================================== 跨行叙述拼接（6）
+  - id: bm-039
+    category: 跨行拼接
+    note: 上一行的「未见」不外溢到下一行。
+    text: "双肺未见明显结节。\n右下肺见一磨玻璃结节影。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-040
+    category: 跨行拼接
+    note: 同一句折行 —— 尺寸不丢（逗号后的换行不是句末）。
+    text: "右下肺见一磨玻璃结节，\n大小约 8mm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.0, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-041
+    category: 跨行拼接
+    note: 两行都是否定 —— 整体阴性。
+    text: "双肺未见明显异常。\n未见明显结节影。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  - id: bm-042
+    category: 跨行拼接
+    note: 尺寸写在下一行 —— 放射科读者会把它读成上一处病灶的尺寸。
+    text: "右下肺见一实性结节影。\n最大径约 1.0cm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 10.0, density: 实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-043
+    category: 跨行拼接
+    note: 阳性在前、否定在后，跨行。
+    text: "左肺上叶见一磨玻璃结节，\n双肺未见明显异常。"
+    expect: {presence: true, location: 左肺上叶, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-044
+    category: 跨行拼接
+    note: 技术性描述 + 阴性结论。
+    text: "胸部正位片，摄片位置满意。\n双肺未见明显异常。"
+    expect: {presence: false, location: null, size_mm: null, density: null, lesions: 0, needs_human_review: false}
+
+  # ============================================================ 量纲混写（8）
+  - id: bm-045
+    category: 量纲混写
+    note: 厘米写法换算成毫米。
+    text: "右下肺见一磨玻璃结节，大小约 0.8cm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.0, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-046
+    category: 量纲混写
+    note: 中文单位「毫米」。
+    text: "右下肺见一磨玻璃结节，直径约 8 毫米。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.0, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-047
+    category: 量纲混写
+    note: 大写单位 —— 大小写归一。
+    text: "右下肺见一结节影约 8MM。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-048
+    category: 量纲混写
+    note: 一位小数 —— 保留一位，不四舍五入成整数。
+    text: "右下肺见一结节影，约 8.3mm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.3, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-049
+    category: 量纲混写
+    note: 中文数字尺寸 —— 按字面意思标注；数值型正则读不出这一类。
+    text: "右下肺见一结节影，直径约一公分。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 10.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-050
+    category: 量纲混写
+    note: 两径写法按最大径计（与「8mm×6mm 取 8.0」同口径）。
+    text: "右下肺见一结节影，大小约 8×6mm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-051
+    category: 量纲混写
+    note: 两位数尺寸 —— 别把 12 读成 1.2。
+    text: "右下肺见一结节影，大小约 12mm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 12.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-052
+    category: 量纲混写
+    note: 厘米 + 一位小数 —— 换算后保留一位。
+    text: "右下肺见一磨玻璃结节，最大径约 0.85cm。"
+    expect: {presence: true, location: 右肺下叶, size_mm: 8.5, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  # ====================================================== 别名与书写变体（8）
+  - id: bm-053
+    category: 别名与书写变体
+    note: 肺野 + 英文密度缩写。
+    text: "右上肺野 GGO 约 8mm。"
+    expect: {presence: true, location: 右肺上叶, size_mm: 8.0, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-054
+    category: 别名与书写变体
+    note: 「肺野」写法。
+    text: "右下肺野见一磨玻璃结节。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-055
+    category: 别名与书写变体
+    note: 「肺尖」写法 —— 归到上叶。
+    text: "左肺尖见一实性结节影。"
+    expect: {presence: true, location: 左肺上叶, size_mm: null, density: 实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-056
+    category: 别名与书写变体
+    note: 「肺底」写法 —— 归到下叶。
+    text: "右肺底见小结节影。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-057
+    category: 别名与书写变体
+    note: 肺段写法 —— 归入所属肺叶。
+    text: "右下肺 S6 见一磨玻璃结节。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  - id: bm-058
+    category: 别名与书写变体
+    note: 省略「肺」字的叶名写法。
+    text: "右上叶见一实性结节，直径约 9mm。"
+    expect: {presence: true, location: 右肺上叶, size_mm: 9.0, density: 实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-059
+    category: 别名与书写变体
+    note: 侧别 + 「下肺」简写 + 厘米。
+    text: "左下肺见一结节影，约 1.1cm。"
+    expect: {presence: true, location: 左肺下叶, size_mm: 11.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-060
+    category: 别名与书写变体
+    note: 省略「见一」的紧凑写法。
+    text: "右肺中叶见磨玻璃结节影。"
+    expect: {presence: true, location: 右肺中叶, size_mm: null, density: 磨玻璃, lesions: 1, needs_human_review: false}
+
+  # ========================================================== 术语外写法（6）
+  - id: bm-061
+    category: 术语外写法
+    note: 「类圆形高密度影」—— 病灶词表没收录这类形态描述。
+    text: "两肺纹理增粗，右上肺见类圆形高密度影。"
+    expect: {presence: true, location: 右肺上叶, size_mm: null, density: 实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-062
+    category: 术语外写法
+    note: 「条片状高密度影」+ 肺门区（按侧别标注）。
+    text: "左肺门区见条片状高密度影。"
+    expect: {presence: true, location: 左肺, size_mm: null, density: 实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-063
+    category: 术语外写法
+    note: 「斑片状影」—— 密度报告未明写，按未写标注。
+    text: "右上肺见斑片状影。"
+    expect: {presence: true, location: 右肺上叶, size_mm: null, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-064
+    category: 术语外写法
+    note: 「高密度结节影」—— 结节认得出来，密度认不出来。
+    text: "右下肺见一高密度结节影。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: 实性, lesions: 1, needs_human_review: false}
+
+  - id: bm-065
+    category: 术语外写法
+    note: 形态修饰词夹在尺寸与病灶词之间。
+    text: "左上肺见一约 4mm 类圆形结节影。"
+    expect: {presence: true, location: 左肺上叶, size_mm: 4.0, density: null, lesions: 1, needs_human_review: false}
+
+  - id: bm-066
+    category: 术语外写法
+    note: 「密度不均」—— 半实性半磨玻璃的混合密度。
+    text: "右下肺见一结节影，密度不均。"
+    expect: {presence: true, location: 右肺下叶, size_mm: null, density: 部分实性, lesions: 1, needs_human_review: false}

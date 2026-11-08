@@ -1,0 +1,54 @@
+{
+  "endpoint": "research_platform",
+  "note": "科研平台评估登记：一次提交（含 Idempotency-Key 头与登记回执）",
+  "model_id": "",
+  "recorded_at": "2026-03-01T00:00:00+08:00",
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/model-evaluation-runs",
+      "query": {},
+      "headers": {
+        "Accept": "*/*",
+        "Authorization": "Bearer {RESEARCH_PLATFORM_TOKEN}",
+        "Content-Type": "application/json",
+        "Idempotency-Key": "a00f4d36d1a6a251bb84dcf89b45ab348c90ddab1a79c703c909cc785486d11d"
+      },
+      "body": {
+        "run_id": "contract-sample-001",
+        "model_id": "demo-model",
+        "model_version": "v1.0.0",
+        "dataset_ref": "contract-sample-table.xlsx",
+        "metrics": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "sensitivity": 1.0
+        },
+        "case_rows": [
+          {
+            "accession_no": "DEMO-0001",
+            "verdict": "hit",
+            "model_findings": "右下肺 | 8.0mm | 磨玻璃 | 0.92",
+            "failure_reason": "",
+            "tool_call_id": "tc_0123456789abcdef0123456789abcdef"
+          }
+        ],
+        "submitted_by": "信息科-王工",
+        "submitted_at": "2026-03-01T00:00:00+08:00"
+      }
+    }
+  ],
+  "responses": [
+    {
+      "status": 200,
+      "payload": {
+        "registration_id": "REG-0001",
+        "run_id": "contract-sample-001",
+        "status": "registered",
+        "received_at": "2026-03-01T00:00:00+08:00"
+      }
+    }
+  ]
+}

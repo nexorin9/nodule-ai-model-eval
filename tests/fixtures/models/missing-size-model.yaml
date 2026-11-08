@@ -1,0 +1,10 @@
+# 响应字段映射缺 size 一项 —— 载入时应报 FIELD_MAPPING_MISSING 并写明缺哪个字段
+model_id: missing-size-model
+model_version: "1.0.0"
+authorized: true
+endpoint_path: /api/v1/detections
+response_mapping:
+  candidates: candidates
+  position: position
+  density: density
+  confidence: confidence

@@ -1,0 +1,33 @@
+{
+  "_comment": "连续 5xx 样例：推理端点连续返回 500。退避重试最多 3 次（指数、min 4s），仍失败则该例判 failed 并落 INFERENCE_5XX —— 绝不重试到无穷、绝不当阴性。",
+  "scenario": "consecutive_5xx",
+  "expected_error_code": "INFERENCE_5XX",
+  "expected_verdict": "failed",
+  "expected_attempts": 3,
+  "counts_toward_metrics": false,
+  "accession_no": "ERR5XX-0001",
+  "status_sequence": [500, 500, 500],
+  "request": {
+    "study_uid": "STUDY-ERR5XX-0001",
+    "image_ref": "dx://demo/err5xx-0001",
+    "model_id": "demo-model",
+    "model_version": "v1.0.0"
+  },
+  "response": {
+    "error": "upstream inference backend unavailable",
+    "status": 500
+  },
+  "stub": {
+    "kind": "inference",
+    "status_sequence": [500, 500, 500],
+    "echo_study_uid": true,
+    "candidates": [
+      {
+        "position": "右下肺",
+        "size_mm": 8.0,
+        "density": "磨玻璃",
+        "confidence": 0.92
+      }
+    ]
+  }
+}

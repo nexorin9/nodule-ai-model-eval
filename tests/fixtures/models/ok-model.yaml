@@ -1,0 +1,11 @@
+# 被评模型目录样例（测试替身数据，不参与正式评估）
+model_id: fixture-model
+model_version: "1.4.2"
+authorized: true
+endpoint_path: /api/v1/detections
+response_mapping:
+  candidates: candidates
+  position: position
+  size: size_mm
+  density: density
+  confidence: confidence

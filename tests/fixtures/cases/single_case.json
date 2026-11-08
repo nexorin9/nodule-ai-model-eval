@@ -1,0 +1,15 @@
+{
+  "run_id": "smoke-001",
+  "model_id": "demo-model",
+  "model_version": "v1.0.0",
+  "dataset_ref": "本地样例",
+  "cases": [
+    {
+      "accession_no": "DEMO-0001",
+      "gold_standard_text": "右下肺见一磨玻璃结节，大小约 8mm。",
+      "image_ref": "dx://demo/study-001",
+      "row_no": 2,
+      "study_uid": "STUDY-DEMO-001"
+    }
+  ]
+}

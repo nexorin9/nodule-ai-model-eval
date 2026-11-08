@@ -1,0 +1,393 @@
+# 部位与密度等价表 —— 金标准归并与模型输出比对**共用的唯一真源**。
+#
+# 为什么只留这一份：金标准写「右下肺」、厂商模型回「右肺下叶」，指的是同一处
+# 病灶。两边各写一张表，一旦两边漂移，同一处病灶就会被判成「部位不一致」，
+# 一次命中被算成漏诊 —— 敏感度直接被拉低，而且从报告上看不出来。
+#
+# 表以**数据**形式落在这里：新增别名只改这一个文件，**不改判定逻辑代码**
+# （判定层只认 canonical 里的标准标签，别名一律先归一）。
+#
+# 写法约定：
+#   1. 别名的值可以直接是标准标签（简写）；
+#   2. 也可以写成 {canonical, segment, segment_code} —— 肺段归入所属肺叶时
+#      保留「原文写的是哪个肺段」，事后核对时说得清是怎么归的；
+#   3. 别名在载入时统一做键归一（NFKC 全角转半角 → 去空白与连字符 → 字母小写），
+#      所以「右肺上叶」「右肺 上叶」「右肺上叶。」认作同一个；
+#      两个别名归一后撞键会在**载入时报错**，不会静默取一个。
+#
+# 侧别与肺叶的口径：右肺三叶（左肺两叶，没有中叶）—— 写成「左肺中叶」这种
+# 不存在的解剖结构时，等价表**认不出来**（返回空），交人工复核，不替医生编一个。
+
+locations:
+  # 标准标签（判定层只认这些）。末三个是「未指定侧别」的写法。
+  canonical:
+    - 右肺上叶
+    - 右肺中叶
+    - 右肺下叶
+    - 左肺上叶
+    - 左肺下叶
+    - 右肺
+    - 左肺
+    - 双肺
+    - 上叶
+    - 中叶
+    - 下叶
+
+  aliases:
+    # ---------------- 右肺上叶 ----------------
+    右肺上叶: 右肺上叶
+    右上叶: 右肺上叶
+    右肺上: 右肺上叶
+    右上: 右肺上叶
+    右上肺: 右肺上叶
+    右上肺野: 右肺上叶
+    右上肺区: 右肺上叶
+    右肺尖: 右肺上叶
+    右上肺尖: 右肺上叶
+    "RUL": 右肺上叶
+    右肺上叶尖段:
+      canonical: 右肺上叶
+      segment: 尖段
+      segment_code: S1
+    右肺上叶后段:
+      canonical: 右肺上叶
+      segment: 后段
+      segment_code: S2
+    右肺上叶前段:
+      canonical: 右肺上叶
+      segment: 前段
+      segment_code: S3
+    右上叶尖段:
+      canonical: 右肺上叶
+      segment: 尖段
+      segment_code: S1
+    右上叶后段:
+      canonical: 右肺上叶
+      segment: 后段
+      segment_code: S2
+    右上叶前段:
+      canonical: 右肺上叶
+      segment: 前段
+      segment_code: S3
+
+    # ---------------- 右肺中叶 ----------------
+    右肺中叶: 右肺中叶
+    右中叶: 右肺中叶
+    右肺中: 右肺中叶
+    右中: 右肺中叶
+    右中肺: 右肺中叶
+    右中肺野: 右肺中叶
+    "RML": 右肺中叶
+    右肺中叶舌段:
+      canonical: 右肺中叶
+      segment: 舌段
+      segment_code: S5
+    右肺舌段:
+      canonical: 右肺中叶
+      segment: 舌段
+      segment_code: S5
+
+    # ---------------- 右肺下叶 ----------------
+    右肺下叶: 右肺下叶
+    右下叶: 右肺下叶
+    右肺下: 右肺下叶
+    右下: 右肺下叶
+    右下肺: 右肺下叶
+    右下肺野: 右肺下叶
+    右下肺区: 右肺下叶
+    "RLL": 右肺下叶
+    右肺下叶背段:
+      canonical: 右肺下叶
+      segment: 下叶背段
+      segment_code: S6
+    右下叶背段:
+      canonical: 右肺下叶
+      segment: 下叶背段
+      segment_code: S6
+    右下肺背段:
+      canonical: 右肺下叶
+      segment: 下叶背段
+      segment_code: S6
+    右下肺S6:
+      canonical: 右肺下叶
+      segment: 下叶背段
+      segment_code: S6
+    右肺下叶内基底段:
+      canonical: 右肺下叶
+      segment: 下叶内基底段
+      segment_code: S7
+    右下叶内基底段:
+      canonical: 右肺下叶
+      segment: 下叶内基底段
+      segment_code: S7
+    右下肺内基底段:
+      canonical: 右肺下叶
+      segment: 下叶内基底段
+      segment_code: S7
+    右肺下叶前基底段:
+      canonical: 右肺下叶
+      segment: 下叶前基底段
+      segment_code: S8
+    右下叶前基底段:
+      canonical: 右肺下叶
+      segment: 下叶前基底段
+      segment_code: S8
+    右下肺前基底段:
+      canonical: 右肺下叶
+      segment: 下叶前基底段
+      segment_code: S8
+    右肺下叶外基底段:
+      canonical: 右肺下叶
+      segment: 下叶外基底段
+      segment_code: S9
+    右下叶外基底段:
+      canonical: 右肺下叶
+      segment: 下叶外基底段
+      segment_code: S9
+    右下肺外基底段:
+      canonical: 右肺下叶
+      segment: 下叶外基底段
+      segment_code: S9
+    右肺下叶后基底段:
+      canonical: 右肺下叶
+      segment: 下叶后基底段
+      segment_code: S10
+    右下叶后基底段:
+      canonical: 右肺下叶
+      segment: 下叶后基底段
+      segment_code: S10
+    右下肺后基底段:
+      canonical: 右肺下叶
+      segment: 下叶后基底段
+      segment_code: S10
+
+    # ---------------- 左肺上叶 ----------------
+    左肺上叶: 左肺上叶
+    左上叶: 左肺上叶
+    左肺上: 左肺上叶
+    左上: 左肺上叶
+    左上肺: 左肺上叶
+    左上肺野: 左肺上叶
+    左上肺区: 左肺上叶
+    左肺尖: 左肺上叶
+    左上肺尖: 左肺上叶
+    "LUL": 左肺上叶
+    左肺上叶尖后段:
+      canonical: 左肺上叶
+      segment: 尖后段
+      segment_code: S1+2
+    左肺上叶前段:
+      canonical: 左肺上叶
+      segment: 前段
+      segment_code: S3
+    左肺上叶上舌段:
+      canonical: 左肺上叶
+      segment: 上舌段
+      segment_code: S4
+    左肺上叶下舌段:
+      canonical: 左肺上叶
+      segment: 下舌段
+      segment_code: S5
+    左肺上叶舌段:
+      canonical: 左肺上叶
+      segment: 舌段
+      segment_code: S4
+    左肺舌段:
+      canonical: 左肺上叶
+      segment: 舌段
+      segment_code: S4
+    左上叶尖后段:
+      canonical: 左肺上叶
+      segment: 尖后段
+      segment_code: S1+2
+    左上叶前段:
+      canonical: 左肺上叶
+      segment: 前段
+      segment_code: S3
+    左上叶舌段:
+      canonical: 左肺上叶
+      segment: 舌段
+      segment_code: S4
+
+    # ---------------- 左肺下叶 ----------------
+    左肺下叶: 左肺下叶
+    左下叶: 左肺下叶
+    左肺下: 左肺下叶
+    左下: 左肺下叶
+    左下肺: 左肺下叶
+    左下肺野: 左肺下叶
+    左下肺区: 左肺下叶
+    "LLL": 左肺下叶
+    左肺下叶背段:
+      canonical: 左肺下叶
+      segment: 下叶背段
+      segment_code: S6
+    左下叶背段:
+      canonical: 左肺下叶
+      segment: 下叶背段
+      segment_code: S6
+    左下肺背段:
+      canonical: 左肺下叶
+      segment: 下叶背段
+      segment_code: S6
+    左下肺S6:
+      canonical: 左肺下叶
+      segment: 下叶背段
+      segment_code: S6
+    左肺下叶舌叶段:
+      canonical: 左肺下叶
+      segment: 舌叶段
+      segment_code: S7
+    左下叶舌叶段:
+      canonical: 左肺下叶
+      segment: 舌叶段
+      segment_code: S7
+    左肺下叶前基底段:
+      canonical: 左肺下叶
+      segment: 下叶前基底段
+      segment_code: S8
+    左下叶前基底段:
+      canonical: 左肺下叶
+      segment: 下叶前基底段
+      segment_code: S8
+    左下肺前基底段:
+      canonical: 左肺下叶
+      segment: 下叶前基底段
+      segment_code: S8
+    左肺下叶外基底段:
+      canonical: 左肺下叶
+      segment: 下叶外基底段
+      segment_code: S9
+    左下叶外基底段:
+      canonical: 左肺下叶
+      segment: 下叶外基底段
+      segment_code: S9
+    左下肺外基底段:
+      canonical: 左肺下叶
+      segment: 下叶外基底段
+      segment_code: S9
+    左肺下叶后基底段:
+      canonical: 左肺下叶
+      segment: 下叶后基底段
+      segment_code: S10
+    左下叶后基底段:
+      canonical: 左肺下叶
+      segment: 下叶后基底段
+      segment_code: S10
+    左下肺后基底段:
+      canonical: 左肺下叶
+      segment: 下叶后基底段
+      segment_code: S10
+
+    # ---------------- 整肺 ----------------
+    右肺: 右肺
+    右肺野: 右肺
+    右侧肺野: 右肺
+    左肺: 左肺
+    左肺野: 左肺
+    左侧肺野: 左肺
+    双肺: 双肺
+    双肺野: 双肺
+    双侧肺野: 双肺
+    双侧肺: 双肺
+    两侧肺野: 双肺
+    两侧肺: 双肺
+    两肺: 双肺
+
+    # ---------------- 未指定侧别 ----------------
+    # 只写肺叶 / 肺段、不写哪一侧 —— 标准标签也**不带侧别**，
+    # 判定层按「侧别未指定」处理（任务 27 的最严口径再定一致性）。
+    上叶: 上叶
+    中叶: 中叶
+    下叶: 下叶
+    尖段: 上叶
+    后段: 上叶
+    前段: 上叶
+    中段: 中叶
+    上舌段: 上叶
+    下舌段: 上叶
+    背段: 下叶
+    下叶背段: 下叶
+    内基底段: 下叶
+    前基底段: 下叶
+    外基底段: 下叶
+    后基底段: 下叶
+    "S1": 上叶
+    "S2": 上叶
+    "S3": 上叶
+    "S6": 下叶
+    "S7": 下叶
+    "S8": 下叶
+    "S9": 下叶
+    "S10": 下叶
+    "S1+2": 上叶
+    # 刻意**不收** S4 / S5：右肺 S4/S5 属中叶、左肺 S4/S5 属上叶，
+    # 不带侧别时说不清归哪边 —— 与其猜一个，不如交人工复核。
+
+densities:
+  # 密度标准标签。
+  canonical:
+    - 磨玻璃
+    - 实性
+    - 部分实性
+    - 钙化
+    - 空洞
+    - 囊性
+
+  aliases:
+    # ---------------- 磨玻璃 ----------------
+    磨玻璃: 磨玻璃
+    磨玻璃影: 磨玻璃
+    磨玻璃结节: 磨玻璃
+    磨玻璃密度: 磨玻璃
+    毛玻璃影: 磨玻璃
+    "GGN": 磨玻璃
+    "GGO": 磨玻璃
+    "ground-glass": 磨玻璃
+    "ground-glass-nodule": 磨玻璃
+    "ground-glass-opacity": 磨玻璃
+
+    # ---------------- 实性 ----------------
+    实性: 实性
+    实性影: 实性
+    实性结节: 实性
+    实性密度: 实性
+    "solid": 实性
+    "solid-nodule": 实性
+
+    # ---------------- 部分实性 ----------------
+    部分实性: 部分实性
+    部分实性影: 部分实性
+    部分实性结节: 部分实性
+    部分磨玻璃: 部分实性
+    混合密度: 部分实性
+    混合型: 部分实性
+    半实性: 部分实性
+    "part-solid": 部分实性
+    "partially-solid": 部分实性
+    "PSN": 部分实性
+    "mixed-ground-glass": 部分实性
+
+    # ---------------- 钙化 ----------------
+    钙化: 钙化
+    钙化灶: 钙化
+    钙化结节: 钙化
+    "calcified": 钙化
+    "calcification": 钙化
+
+    # ---------------- 空洞 ----------------
+    空洞: 空洞
+    空洞影: 空洞
+    空洞灶: 空洞
+    "cavity": 空洞
+    "cavitary": 空洞
+    "cavitation": 空洞
+
+    # ---------------- 囊性 ----------------
+    囊性: 囊性
+    囊性影: 囊性
+    囊性结节: 囊性
+    "cystic": 囊性
+    "cyst": 囊性
+    # 空洞与囊性**不合并**：两者在报告里是分开写的，
+    # 合并会让「最严口径」的比对变松。

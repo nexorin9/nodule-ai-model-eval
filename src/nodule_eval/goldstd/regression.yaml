@@ -1,0 +1,291 @@
+# 否定误召 / 漏召回归集（任务 20）
+#
+# **为什么单独落一份数据**：否定作用域是规则基线里最容易悄悄漂的一层 ——
+# 改一个词表、改一处切句规则，敏感度与特异度就跟着动，而报告上看不出来。
+# 所以每条真实写法都把**期望标签钉死**，规则一改就跑一遍回归。
+#
+# 两类错误，两边都直接扭曲指标：
+#
+# - **否定误召**：阴性被判成阳性 —— 拉低特异度（真阴性被算成误报）；
+# - **否定漏召**：阳性被判成阴性 —— 拉低敏感度（真阳性被算成漏诊）。
+#
+# `expect` 里的字段全部可为空（null = 这一项**读不出来**，不猜）。
+# `lesions` 是**病灶处数**（多病灶口径），
+# `location` / `size_mm` / `density` 是**首处病灶**的属性。
+
+version: 1
+description: 放射科胸片报告里真实出现过的否定写法与多病灶写法。
+
+cases:
+  # ---------------------------------------------------------------- 否定误召
+  - id: neg-001
+    category: 否定误召
+    note: 「无钙化灶」—— 只看肯定词表会把「钙化」当成病灶（阳性），实际是阴性。
+    text: "双肺无钙化灶。"
+    expect:
+      presence: false
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: false
+
+  - id: neg-002
+    category: 否定误召
+    note: 属性串味 ——「钙化」在否定范围内，密度不能算成阳性属性。
+    text: "双肺未见明显结节及钙化灶。"
+    expect:
+      presence: false
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: false
+
+  - id: neg-003
+    category: 否定误召
+    note: 连着两个否定句 —— 任一句说有才说有。
+    text: "双肺未见明显异常，未见结节影。"
+    expect:
+      presence: false
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: false
+
+  - id: neg-004
+    category: 否定误召
+    note: 属性串味 —— 部位是「右下肺」，不是前半句的「双肺」。
+    text: "双肺未见异常，但右下肺见磨玻璃结节。"
+    expect:
+      presence: true
+      location: 右肺下叶
+      size_mm: null
+      density: 磨玻璃
+      lesions: 1
+      needs_human_review: false
+
+  - id: neg-005
+    category: 否定误召
+    note: 部位串味 —— 前半句的「双肺」不许落到后半句的病灶上。
+    text: "双肺纹理清晰，未见明显异常。"
+    expect:
+      presence: false
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: false
+
+  - id: neg-006
+    category: 否定误召
+    note: 认不出来的原词记进台账，属性留空 —— 不猜。
+    text: "未见明显异常，无实变灶。"
+    expect:
+      presence: false
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: false
+    unknown_density_terms: ["无实变灶"]
+
+  - id: neg-007
+    category: 否定误召
+    note: 否定词管的是紧跟着的那处病灶，后面的病灶词不受它管。
+    text: "双肺未见结节影，无胸腔积液。"
+    expect:
+      presence: false
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: false
+
+  # ---------------------------------------------------------------- 否定漏召
+  - id: neg-008
+    category: 否定漏召
+    note: 并存事实 —— 前句说没有、后句说有，整体按有算（否则一次真阳性被算成漏诊）。
+    text: "未见异常，可见磨玻璃影。"
+    expect:
+      presence: true
+      location: null
+      size_mm: null
+      density: 磨玻璃
+      lesions: 1
+      needs_human_review: false
+
+  - id: neg-009
+    category: 否定漏召
+    note: 否定只管前一句 —— 后一句的病灶是真的。
+    text: "双肺未见明显结节，可见磨玻璃结节影。"
+    expect:
+      presence: true
+      location: null
+      size_mm: null
+      density: 磨玻璃
+      lesions: 1
+      needs_human_review: false
+
+  - id: neg-010
+    category: 否定漏召
+    note: 「除…外」是例外不是否定 —— 除了那处小结节，没有别的异常。
+    text: "除右下肺小结节外未见异常。"
+    expect:
+      presence: true
+      location: 右肺下叶
+      size_mm: null
+      density: null
+      lesions: 1
+      needs_human_review: false
+
+  - id: neg-011
+    category: 否定漏召
+    note: 属性齐全的阳性句 —— 部位 / 尺寸 / 密度三样都不能丢。
+    text: "未见明显异常，但右下肺见一 8mm 磨玻璃结节。"
+    expect:
+      presence: true
+      location: 右肺下叶
+      size_mm: 8.0
+      density: 磨玻璃
+      lesions: 1
+      needs_human_review: false
+
+  - id: neg-012
+    category: 否定漏召
+    note: 前面有病灶、后面否定 —— 取并存事实的阳性那一侧。
+    text: "右下肺见结节影，左肺未见明显异常。"
+    expect:
+      presence: true
+      location: 右肺下叶
+      size_mm: null
+      density: null
+      lesions: 1
+      needs_human_review: false
+
+  # ------------------------------------------------------------ 否定作用域
+  - id: neg-013
+    category: 否定作用域
+    note: 转折词切开各判各的 ——「未见」管不到后半句。
+    text: "双肺未见异常，但右下肺见磨玻璃结节。"
+    expect:
+      presence: true
+      location: 右肺下叶
+      size_mm: null
+      density: 磨玻璃
+      lesions: 1
+      needs_human_review: false
+
+  - id: neg-014
+    category: 否定作用域
+    note: 否定词与病灶词之间夹着修饰字，否定仍然管得到。
+    text: "双肺未发现明显结节影。"
+    expect:
+      presence: false
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: false
+
+  - id: neg-015
+    category: 否定作用域
+    note: 否定词与病灶词之间夹着「可见」—— 那是新的一句陈述，否定管不到。
+    text: "双肺未见异常可见磨玻璃影。"
+    expect:
+      presence: true
+      location: null
+      size_mm: null
+      density: 磨玻璃
+      lesions: 1
+      needs_human_review: false
+
+  # -------------------------------------------------------------- 多病灶口径
+  - id: neg-016
+    category: 多病灶
+    note: 一句里两处病灶 —— 部位 / 尺寸 / 密度逐处对上。
+    text: "右下肺见一 8mm 磨玻璃结节，左上肺见一 5mm 实性结节。"
+    expect:
+      presence: true
+      location: 右肺下叶
+      size_mm: 8.0
+      density: 磨玻璃
+      lesions: 2
+      needs_human_review: false
+    lesion_expect:
+      - location: 右肺下叶
+        size_mm: 8.0
+        density: 磨玻璃
+      - location: 左肺上叶
+        size_mm: 5.0
+        density: 实性
+
+  - id: neg-017
+    category: 多病灶
+    note: 「及」连接的是同一处的并列描述 ——「钙化」归第二处，不倒着认领。
+    text: "双肺见多发结节及钙化灶。"
+    expect:
+      presence: true
+      location: 双肺
+      size_mm: null
+      density: null
+      lesions: 2
+      needs_human_review: false
+    lesion_expect:
+      - location: 双肺
+        size_mm: null
+        density: null
+      - location: 双肺
+        size_mm: null
+        density: 钙化
+
+  # ---------------------------------------------------------- 跨行叙述拼接
+  - id: neg-018
+    category: 跨行拼接
+    note: 上一行的「未见」不外溢到下一行 —— 跨行拼接后仍按分句判。
+    text: "双肺未见明显异常。\n右下肺见磨玻璃结节影。"
+    expect:
+      presence: true
+      location: 右肺下叶
+      size_mm: null
+      density: 磨玻璃
+      lesions: 1
+      needs_human_review: false
+
+  - id: neg-019
+    category: 跨行拼接
+    note: 同一句话折行 —— 尺寸不丢（逗号收尾的换行不是句末）。
+    text: "右下肺见一磨玻璃结节，\n大小约 8mm。"
+    expect:
+      presence: true
+      location: 右肺下叶
+      size_mm: 8.0
+      density: 磨玻璃
+      lesions: 1
+      needs_human_review: false
+
+  - id: neg-020
+    category: 跨行拼接
+    note: 跨行拼接后两行都是否定 —— 整体阴性。
+    text: "双肺未见明显异常。\n未见明显结节影。"
+    expect:
+      presence: false
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: false
+
+  # -------------------------------------------------------------- 读不出来
+  - id: neg-021
+    category: 读不出来
+    note: 既没说有也没说没有 —— 读不出来就交人工复核，**不落成阴性**。
+    text: "胸部正位片，摄片位置满意。"
+    expect:
+      presence: null
+      location: null
+      size_mm: null
+      density: null
+      lesions: 0
+      needs_human_review: true

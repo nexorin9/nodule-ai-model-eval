@@ -1,0 +1,27 @@
+# 被评模型目录（vendor-template）—— 照着这份文件把贵院在评的厂商加进来
+#
+# 这份声明 **authorized: false** —— 它是模板，不是可用模型：
+# **未授权的模型不加载、不参与本轮评估**，被指名时会报「未获授权」并说明原因。
+#
+# 接入一家新厂商时：
+#   1. 复制本文件为 models/<厂商标识>.yaml；
+#   2. 填 model_id / model_version / endpoint_path；
+#   3. 按厂商返回体的字段名填 response_mapping（值可以是字段名，也可以是点号路径）；
+#   4. 授权上线后再把 authorized 改成 true —— **没授权就参评，评估结论就没有效**。
+
+model_id: vendor-template
+model_version: v0.0.0
+
+# 推理端点路径（相对 INFERENCE_BASE_URL）
+endpoint_path: /api/v1/detections
+
+# 响应字段映射：内部键 → 厂商响应里的字段名（支持点号路径）
+response_mapping:
+  candidates: candidates
+  position: position
+  size: size_mm
+  density: density
+  confidence: confidence
+
+# 未授权的模型不加载、不参与本轮评估
+authorized: false
